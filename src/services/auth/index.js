@@ -3,7 +3,7 @@ const {
   AUTH_LOGIN,
   AUTH_REGISTER,
   AUTH_VERIFY
-} = require('../../constants/makeRequestUrl');
+} = require('../../constants/makeRequestUri');
 
 const login = async (email, password) => {
   const response = await makeRequest('POST', AUTH_LOGIN, { email, password });
