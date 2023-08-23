@@ -1,8 +1,10 @@
 const {
   login,
   register,
-  verify
 } = require('../../controllers/auth');
+const {
+  userRegistration
+} = require('../../controllers/user');
 
 const authRoutes = [
   {
@@ -15,15 +17,13 @@ const authRoutes = [
   {
     method: 'POST',
     path: '/register',
-    handler: (request, h) => {
-      return register(request, h);
-    }
-  },
-  {
-    method: 'GET',
-    path: '/verify',
-    handler: (request, h) => {
-      return verify(request, h);
+    handler: async (request, h) => {
+      const authRegistration = await register(request, h);
+      if (authRegistration.email) {
+        const user = await userRegistration(request, h);
+        return user;
+      }
+      return authRegistration;
     }
   }
 ];

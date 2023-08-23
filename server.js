@@ -1,5 +1,6 @@
 const hapi = require('@hapi/hapi');
 const routes = require('./src/routes');
+const authHandler = require('./src/plugins/authHandler');
 require('dotenv').config();
 
 const server = hapi.server({
@@ -9,6 +10,7 @@ const server = hapi.server({
 
 const init = async () => {
   server.route(routes);
+  await server.register(authHandler);
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
 };

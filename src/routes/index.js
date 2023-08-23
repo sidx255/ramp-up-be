@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
 const authRoutes = require('./auth');
 const {addUser} = require('../utils/trial');
+
 const routes = [
   {
-    method: 'POST',
-    path: '/api/user',
+    method: '*',
+    path: '/',
     handler: (request, h) => {
-      return addUser(request.payload);
+      return 'Hello, world!';
     }
   },
-  ...authRoutes,
+  ...authRoutes
 ];
 
 module.exports = routes;
