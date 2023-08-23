@@ -1,16 +1,21 @@
 /* eslint-disable no-unused-vars */
 const authRoutes = require('./auth');
-const {addUser} = require('../utils/trial');
+const teamRoutes = require('./teams');
+const eventRoutes = require('./events');
+const roomRoutes = require('./rooms');
 
 const routes = [
+  ...authRoutes,
   {
     method: '*',
-    path: '/',
+    path: '/home',
     handler: (request, h) => {
-      return 'Hello, world!';
+      return 'Hello, home!';
     }
   },
-  ...authRoutes
+  ...teamRoutes,
+  ...eventRoutes,
+  ...roomRoutes
 ];
 
 module.exports = routes;

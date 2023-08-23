@@ -17,6 +17,8 @@ const validateJWT = async (request, h) => {
       if (!result.success) {
         throw Boom.unauthorized('JWT Invalid');
       }
+      request.email = result.email;
+      return h.continue;
     } catch (err) {
       throw Boom.unauthorized(err.response.data.message || 'JWT validation failed');
     }
