@@ -1,6 +1,7 @@
 const hapi = require('@hapi/hapi');
 const routes = require('./src/routes');
 const authHandler = require('./src/plugins/authHandler');
+
 require('dotenv').config();
 
 const server = hapi.server({

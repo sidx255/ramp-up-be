@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE
     },
-    room: DataTypes.UUID,
+    roomNo: DataTypes.STRING,
     description: DataTypes.TEXT,
     link: DataTypes.TEXT
   }, {

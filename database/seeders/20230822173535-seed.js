@@ -67,43 +67,9 @@ module.exports = {
         'updated_at': new Date()
       }
     ], {});
-
-    await queryInterface.bulkInsert('rooms', [
-      {
-        'id': uuidv4(),
-        'name': 'Room 1',
-        'created_at': new Date(),
-        'updated_at': new Date()
-      },
-      {
-        'id': uuidv4(),
-        'name': 'Room 2',
-        'created_at': new Date(),
-        'updated_at': new Date()
-      },
-      {
-        'id': uuidv4(),
-        'name': 'Room 3',
-        'created_at': new Date(),
-        'updated_at': new Date()
-      },
-      {
-        'id': uuidv4(),
-        'name': 'Room 4',
-        'created_at': new Date(),
-        'updated_at': new Date()
-      }
-    ], {});
   },
 
   async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
-
     await queryInterface.bulkDelete('users', null, {});
     await queryInterface.bulkDelete('rooms', null, {});
   }

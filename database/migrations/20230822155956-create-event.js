@@ -29,8 +29,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      room: {
-        type: Sequelize.UUID
+      room_no: {
+        type: Sequelize.STRING
       },
       description: {
         type: Sequelize.TEXT

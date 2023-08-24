@@ -1,5 +1,4 @@
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 
 module.exports =
 {
@@ -9,7 +8,11 @@ module.exports =
     'database': process.env.DB_NAME,
     'host': process.env.DB_HOST,
     'port': process.env.DB_PORT,
-    'dialect': process.env.DB_DIALECT
+    'dialect': process.env.DB_DIALECT,
+    'dialectOptions': {
+      useUTC: false,
+    },
+    'timezone': process.env.DB_TIMEZONE,
   },
   'test': {
     'username': process.env.DB_USERNAME,
@@ -17,7 +20,11 @@ module.exports =
     'database': process.env.DB_NAME,
     'host': process.env.DB_HOST,
     'port': process.env.DB_PORT,
-    'dialect': process.env.DB_DIALECT
+    'dialect': process.env.DB_DIALECT,
+    'dialectOptions': {
+      useUTC: false,
+    },
+    'timezone': process.env.DB_TIMEZONE,
   },
   'production': {
     'username': process.env.DB_USERNAME,
@@ -25,6 +32,10 @@ module.exports =
     'database': process.env.DB_NAME,
     'host': process.env.DB_HOST,
     'port': process.env.DB_PORT,
-    'dialect': process.env.DB_DIALECT
+    'dialect': process.env.DB_DIALECT,
+    'dialectOptions': {
+      useUTC: false,
+    },
+    'timezone': process.env.DB_TIMEZONE,
   }
 };

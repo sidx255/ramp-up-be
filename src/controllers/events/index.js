@@ -3,6 +3,7 @@ const {
   getEvent,
   createEvent,
   updateEvent,
+  deleteEvent
 } = require('../../services/events');
 
 const getEventsController = async (request, h) => {
@@ -30,11 +31,19 @@ const updateEventController = async (request, h) => {
   return h.response(event).code(200);
 };
 
+const deleteEventController = async (request, h) => {
+  const { id } = request.params;
+  console.log(request.params );
+  const event = await deleteEvent(id);
+  return h.response(event).code(200);
+};
+
 module.exports = {
   getEventsController,
   getEventController,
   createEventController,
-  updateEventController
+  updateEventController,
+  deleteEventController,
 };
 
     

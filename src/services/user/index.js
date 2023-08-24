@@ -4,7 +4,6 @@ const db = require('../../../database/models');
 const createUser = async (payload) => {
   try {
     const { empNo, name, role, contact, email } = payload;
-    console.log(payload);
     const user = await db.User.create({
       empNo,
       name,

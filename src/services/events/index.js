@@ -1,4 +1,5 @@
 const db = require('../../../database/models');
+// const { roomBooking } = require('../../utils/roomBooking');
 
 const getEvents = async (userEmail) => {
   const events = await db.Event.findAll({
@@ -29,6 +30,17 @@ const updateEvent = async (id, payload) => {
   const event = await db.Event.update(payload, {
     where: {
       id
+    },
+    individualHooks: true 
+  });
+
+  return event;
+};
+
+const deleteEvent = async (id) => {
+  const event = await db.Event.destroy({
+    where: {
+      id
     }
   });
   return event;
@@ -38,5 +50,6 @@ module.exports = {
   getEvents,
   getEvent,
   createEvent,
-  updateEvent
+  updateEvent,
+  deleteEvent
 };

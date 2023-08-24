@@ -2,7 +2,9 @@ const {
   getEventsController,
   getEventController,
   createEventController,
-  updateEventController } = require('../../controllers/events');
+  updateEventController,
+  deleteEventController, 
+} = require('../../controllers/events');
 
 const eventRoutes = [
   {
@@ -33,6 +35,13 @@ const eventRoutes = [
       return updateEventController(request, h);
     }
   },
+  {
+    method: 'DELETE',
+    path: '/event/{id}',
+    handler: (request, h) => {
+      return deleteEventController(request, h);
+    }
+  }
 ];
 
 module.exports = eventRoutes;
