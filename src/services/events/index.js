@@ -1,6 +1,5 @@
 const db = require('../../../database/models');
-const { cacheAvailableRooms } = require('../home');
-// const { roomBooking } = require('../../utils/roomBooking');
+const { bookingCollision, cacheAvailableRooms } = require('../../utils/roomBooking');
 
 const getEvents = async (userEmail) => {
   const events = await db.Event.findAll({
@@ -34,13 +33,21 @@ const getTeamEvents = async (teamId) => {
   return events;
 };
 
-const createEvent = async (payload) => {
+const createEvent = async (payload) => {  
+  if(await bookingCollision(payload)) {
+    throw new Error('Room already booked for this time');
+  }
+
   const event = await db.Event.create(payload);
   await cacheAvailableRooms();
   return event;
 };
 
 const updateEvent = async (id, payload) => {
+  if(await bookingCollision(payload)) {
+    throw new Error('Room already booked for this time');
+  }
+
   const event = await db.Event.update(payload, {
     where: {
       id

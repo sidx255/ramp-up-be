@@ -1,4 +1,5 @@
 const db = require('../../../database/models');
+const { getRoomsOccupancy } = require('../../services/rooms');
 
 const roomBooking = async (updatedDataValues, previousDataValues) => {
       
@@ -42,6 +43,54 @@ const roomBooking = async (updatedDataValues, previousDataValues) => {
   }
 };
 
+const bookingCollision = async (payload) => {
+  const events = await db.Event.findAll({
+    where: {
+      roomNo: payload.roomNo,
+      [db.Sequelize.Op.or]: [
+        {
+          from: {
+            [db.Sequelize.Op.lt]: payload.to, 
+          },
+          to: {
+            [db.Sequelize.Op.gt]: payload.from,
+          },
+        },
+      ],
+    },
+  });
+
+  return events.length > 0;
+};
+
+
+const getAvailableRoomsDb = async () => {
+  const rooms = await getRoomsOccupancy();
+  const availableRooms = rooms.filter((room) => {
+    const occupancy = room.occupancy;
+    const isAvailable = occupancy.every((event) => {
+      const from = new Date(event.from);
+      const to = new Date(event.to);
+      const currentTime = new Date();
+      return currentTime < from || currentTime > to;
+    });
+    return isAvailable;
+  });
+
+  return availableRooms;
+};
+
+const cacheAvailableRooms = async () => {
+  const rooms = await getAvailableRoomsDb();
+  const updateCache = await global.redisClient.set('availableRooms', JSON.stringify(rooms));
+  if (updateCache) {
+    return rooms;
+  }
+  return [];
+};
+
 module.exports = {
-  roomBooking
+  roomBooking,
+  bookingCollision,
+  cacheAvailableRooms
 };

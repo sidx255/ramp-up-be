@@ -5,9 +5,7 @@ const {
 const {
   getTeams
 } = require('../teams');
-const {
-  getRoomsOccupancy
-} = require('../rooms');
+const { cacheAvailableRooms } = require('../../utils/roomBooking');
 
 const getMyEvents = async (email) => {
   const myEvents = await getEvents(email);
@@ -21,30 +19,6 @@ const getMyEvents = async (email) => {
   return allMyEvents;
 };
 
-const getAvailableRoomsDb = async () => {
-  const rooms = await getRoomsOccupancy();
-  const availableRooms = rooms.filter((room) => {
-    const occupancy = room.occupancy;
-    const isAvailable = occupancy.every((event) => {
-      const from = new Date(event.from);
-      const to = new Date(event.to);
-      const currentTime = new Date();
-      return currentTime < from || currentTime > to;
-    });
-    return isAvailable;
-  });
-
-  return availableRooms;
-};
-
-const cacheAvailableRooms = async () => {
-  const rooms = await getAvailableRoomsDb();
-  const updateCache = await global.redisClient.set('availableRooms', JSON.stringify(rooms));
-  if (updateCache) {
-    return rooms;
-  }
-  return [];
-};
 
 const getAvailableRooms = async () => {
   const availableRooms = await global.redisClient.get('availableRooms');
@@ -58,5 +32,4 @@ const getAvailableRooms = async () => {
 module.exports = {
   getMyEvents,
   getAvailableRooms,
-  cacheAvailableRooms
 };
