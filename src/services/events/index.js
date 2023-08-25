@@ -1,4 +1,5 @@
 const db = require('../../../database/models');
+const { cacheAvailableRooms } = require('../home');
 // const { roomBooking } = require('../../utils/roomBooking');
 
 const getEvents = async (userEmail) => {
@@ -21,8 +22,21 @@ const getEvent = async (id) => {
   return event;
 };
 
+const getTeamEvents = async (teamId) => {
+  const events = await db.Event.findAll({
+    where: {
+      empNos: {
+        [db.Sequelize.Op.contains]: [teamId]
+      }
+    }
+  });
+
+  return events;
+};
+
 const createEvent = async (payload) => {
   const event = await db.Event.create(payload);
+  await cacheAvailableRooms();
   return event;
 };
 
@@ -33,7 +47,7 @@ const updateEvent = async (id, payload) => {
     },
     individualHooks: true 
   });
-
+  await cacheAvailableRooms();
   return event;
 };
 
@@ -43,12 +57,14 @@ const deleteEvent = async (id) => {
       id
     }
   });
+  await cacheAvailableRooms();
   return event;
 };
 
 module.exports = {
   getEvents,
   getEvent,
+  getTeamEvents,
   createEvent,
   updateEvent,
   deleteEvent

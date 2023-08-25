@@ -1,6 +1,7 @@
 const {
   getEvents,
   getEvent,
+  getTeamEvents,
   createEvent,
   updateEvent,
   deleteEvent
@@ -18,6 +19,12 @@ const getEventController = async (request, h) => {
   return h.response(event).code(200);
 };
 
+const getTeamEventsController = async (request, h) => {
+  const { teamId } = request.params;
+  const events = await getTeamEvents(teamId);
+  return h.response(events).code(200);
+};
+
 const createEventController = async (request, h) => {
   const { payload } = request;
   const event = await createEvent(payload);
@@ -33,7 +40,6 @@ const updateEventController = async (request, h) => {
 
 const deleteEventController = async (request, h) => {
   const { id } = request.params;
-  console.log(request.params );
   const event = await deleteEvent(id);
   return h.response(event).code(200);
 };
@@ -41,6 +47,7 @@ const deleteEventController = async (request, h) => {
 module.exports = {
   getEventsController,
   getEventController,
+  getTeamEventsController,
   createEventController,
   updateEventController,
   deleteEventController,

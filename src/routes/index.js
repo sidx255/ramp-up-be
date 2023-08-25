@@ -3,19 +3,14 @@ const authRoutes = require('./auth');
 const teamRoutes = require('./teams');
 const eventRoutes = require('./events');
 const roomRoutes = require('./rooms');
+const homeRoutes = require('./home');
 
 const routes = [
   ...authRoutes,
-  {
-    method: '*',
-    path: '/home',
-    handler: (request, h) => {
-      return 'Hello, home!';
-    }
-  },
   ...teamRoutes,
   ...eventRoutes,
-  ...roomRoutes
+  ...roomRoutes,
+  ...homeRoutes
 ];
 
 module.exports = routes;

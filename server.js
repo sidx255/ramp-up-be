@@ -1,8 +1,23 @@
 const hapi = require('@hapi/hapi');
 const routes = require('./src/routes');
 const authHandler = require('./src/plugins/authHandler');
+const redis = require('redis');
 
 require('dotenv').config();
+
+global.redisClient = redis.createClient();
+global.redisClient.on('error', (err) => {
+  console.log('BE Redis error: ', err);
+});
+
+global.redisClient
+  .connect()
+  .then(() => {
+    console.log('BE Redis connected');
+  })
+  .catch((err) => {
+    console.log('BE Redis error: ', err);
+  });
 
 const server = hapi.server({
   host: 'localhost',

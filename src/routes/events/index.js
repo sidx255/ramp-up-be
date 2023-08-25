@@ -1,6 +1,7 @@
 const { 
   getEventsController,
   getEventController,
+  getTeamEventsController,
   createEventController,
   updateEventController,
   deleteEventController, 
@@ -12,6 +13,13 @@ const eventRoutes = [
     path: '/events',
     handler: (request, h) => {
       return getEventsController(request, h);
+    }
+  },
+  {
+    method: 'GET',
+    path: '/events/team/{teamId}',
+    handler: (request, h) => {
+      return getTeamEventsController(request, h);
     }
   },
   {
