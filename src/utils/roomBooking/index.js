@@ -9,6 +9,11 @@ const nameAndTime = (payload) => {
   return { name, date, time };
 };
 
+const calculateReminderTime = (date, time) => {
+  const eventDateTime = new Date(`${date} ${time}`);
+  return eventDateTime - 60 * 60 * 1000;
+};
+
 const roomBooking = async (updatedDataValues, previousDataValues) => {
       
   if(updatedDataValues.room !== previousDataValues.room) {
@@ -98,6 +103,7 @@ const cacheAvailableRooms = async () => {
 
 module.exports = {
   nameAndTime,
+  calculateReminderTime,
   roomBooking,
   bookingCollision,
   cacheAvailableRooms

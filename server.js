@@ -2,7 +2,10 @@ const hapi = require('@hapi/hapi');
 const routes = require('./src/routes');
 const authHandler = require('./src/plugins/authHandler');
 const redis = require('redis');
-const emailConsumer = require('./src/utils/rabbitMq/consumer');
+const {
+  emailConsumer, 
+  reminderConsumer
+} = require('./src/utils/rabbitMq/consumer');
 
 require('dotenv').config();
 
@@ -21,7 +24,11 @@ global.redisClient
   });
 
 emailConsumer().catch((err) => {
-  console.log('BE RabbitMQ error: ', err);
+  console.log('BE RabbitMQ Email error: ', err);
+});
+
+reminderConsumer().catch((err) => {
+  console.log('BE RabbitMQ Reminder error: ', err);
 });
 
 const server = hapi.server({

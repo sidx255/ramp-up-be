@@ -1,10 +1,13 @@
-const setupRabbitMQ = require('../');
+const {
+  setupEmailRabbitMQ,
+  setupReminderRabbitMQ
+} = require('../');
 
 const emailHandler = require('../../sendInBlue');
-const queueName = 'email_queue';
 
 const emailConsumer = async () => {
-  const channel = await setupRabbitMQ();
+  const queueName = 'email_queue';
+  const channel = await setupEmailRabbitMQ();
   
   channel.consume(queueName, async (message) => {
     const emailContent = JSON.parse(message.content.toString());
@@ -20,5 +23,29 @@ const emailConsumer = async () => {
   });
 };
 
-module.exports = emailConsumer;
+const reminderConsumer = async () => {
+  const queueName = 'reminder_queue';
+  const channel = await setupReminderRabbitMQ();
+
+  channel.consume(queueName, async (message) => {
+    console.log('reminder', message);
+    const reminderData = JSON.parse(message.content.toString());
+    await emailHandler(
+      reminderData.organizer,
+      reminderData.name,
+      reminderData.eventName,
+      reminderData.roomNo,
+      reminderData.date,
+      reminderData.time,
+      reminderData.type
+    );
+    channel.ack(message);
+
+  });
+};
+
+module.exports = {
+  emailConsumer,
+  reminderConsumer
+};
 

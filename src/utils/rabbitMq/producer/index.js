@@ -1,9 +1,13 @@
-const queueName = 'email_queue';
 
-const setupRabbitMQ = require('../');
+const {
+  setupEmailRabbitMQ, 
+  setupReminderRabbitMQ
+} = require('../');
+// const { calculateReminderTime } = require('../../roomBooking');
 
 const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, time, type) => {
-  const channel = await setupRabbitMQ();
+  const channel = await setupEmailRabbitMQ();
+  const queueName = 'email_queue';
 
   const emailContent = {
     organizerEmail,
@@ -20,4 +24,58 @@ const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, t
   });
 };
 
-module.exports = sendEmailToQueue;
+const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, type) => {
+  // const reminderTime = calculateReminderTime(date, time);
+  const channel = await setupReminderRabbitMQ();
+  const reminderData = {
+    organizer,
+    name,
+    eventName,
+    roomNo,
+    date,
+    time,
+    type,
+  };
+  
+  const delayQueueName = 'delay_queue';
+  await channel.assertQueue(delayQueueName, {
+    durable: true,
+    arguments: {
+      'x-dead-letter-exchange': '',
+      'x-dead-letter-routing-key': 'reminder_queue',
+      'x-message-ttl': 60000
+    }
+  });
+  const exchangeName = 'delay_exchange';
+  await channel.assertExchange(exchangeName, 'direct', {
+    durable: true
+  });
+
+  await channel.bindQueue(delayQueueName, exchangeName, '');
+
+  await channel.publish(exchangeName, '', Buffer.from(JSON.stringify(reminderData)), {
+    persistent: true
+  });
+
+};
+
+const cancelScheduledReminder = async (organizer, name, eventName, roomNo, date, time) => {
+  const queueName = 'delay_queue';
+  const channel = await setupReminderRabbitMQ();
+
+  await channel.purgeQueue(queueName, false, {
+    'x-match': 'all',
+    'organizer': organizer,
+    'name': name,
+    'eventName': eventName,
+    'roomNo': roomNo,
+    'date': date,
+    'time': time,
+  });
+};
+
+module.exports = {
+  sendEmailToQueue,
+  scheduleReminder,
+  cancelScheduledReminder
+};
