@@ -2,7 +2,7 @@ const { sendMail } = require('./api');
 
 const sendRegistrationEmail = async (email, name, eventName, roomNo, date, time) => {
   const sender = { name: process.env.SENDINBLUE_USERNAME, email: process.env.SENDINBLUE_EMAIL };
-  const to = [{ email, name }];
+  const to = [{ name: name, email: email }];
   const subject = `GetARoom booked - ${eventName} on ${date} at ${time}`;
   const htmlContent =
     `
@@ -42,11 +42,12 @@ const sendRegistrationEmail = async (email, name, eventName, roomNo, date, time)
   </html>
   `;
   await sendMail(sender, to, subject, htmlContent);
+  console.log('Email sent');
 };
 
 const sendUpdateEmail = async (email, name, eventName, roomNo, date, time) => {
   const sender = { name: process.env.SENDINBLUE_USERNAME, email: process.env.SENDINBLUE_EMAIL };
-  const to = [{ email, name }];
+  const to = [{ name: name, email: email }];
   const subject = `GetARoom updated - ${eventName} on ${date} at ${time}`;
   const htmlContent = `
   <html lang="en">
@@ -85,6 +86,7 @@ const sendUpdateEmail = async (email, name, eventName, roomNo, date, time) => {
   </html>
   `;
   await sendMail(sender, to, subject, htmlContent);
+  console.log('Email sent');
 };
 
 const sendCancellationEmail = async (email, name, eventName, roomNo, date, time) => {
@@ -128,10 +130,17 @@ const sendCancellationEmail = async (email, name, eventName, roomNo, date, time)
   </html>
   `;
   await sendMail(sender, to, subject, htmlContent);
+  console.log('Email sent');
 };
 
-module.exports = {
-  sendRegistrationEmail,
-  sendUpdateEmail,
-  sendCancellationEmail
+const emailHandler = async (email, name, eventName, roomNo, date, time, type) => {
+  if (type === 'c') {
+    await sendRegistrationEmail(email, name, eventName, roomNo, date, time);
+  } else if (type === 'u') {
+    await sendUpdateEmail(email, name, eventName, roomNo, date, time);
+  } else if (type === 'd') {
+    await sendCancellationEmail(email, name, eventName, roomNo, date, time);
+  }
 };
+
+module.exports = emailHandler;

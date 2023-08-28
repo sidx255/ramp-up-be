@@ -1,6 +1,14 @@
 const db = require('../../../database/models');
 const { getRoomsOccupancy } = require('../../services/rooms');
 
+const nameAndTime = (payload) => {
+  const name = payload.organizer.split('@')[0];
+  const dateObject = new Date(payload.from);
+  const date = `${dateObject.getUTCDate()}/${dateObject.getUTCMonth() + 1}/${dateObject.getUTCFullYear()}`;
+  const time = `${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;  
+  return { name, date, time };
+};
+
 const roomBooking = async (updatedDataValues, previousDataValues) => {
       
   if(updatedDataValues.room !== previousDataValues.room) {
@@ -63,7 +71,6 @@ const bookingCollision = async (payload) => {
   return events.length > 0;
 };
 
-
 const getAvailableRoomsDb = async () => {
   const rooms = await getRoomsOccupancy();
   const availableRooms = rooms.filter((room) => {
@@ -90,6 +97,7 @@ const cacheAvailableRooms = async () => {
 };
 
 module.exports = {
+  nameAndTime,
   roomBooking,
   bookingCollision,
   cacheAvailableRooms

@@ -18,9 +18,14 @@ const authRoutes = [
     method: 'POST',
     path: '/register',
     handler: async (request, h) => {
-      const authRegistration = await register(request, h);
+      const authRegistration = await register(request, h).catch((error) => {
+        return h.response(error).code(500);
+      });
       if (authRegistration.email) {
-        const user = await userRegistration(request, h);
+        const user = await userRegistration(request, h).
+          catch((error) => {
+            return h.response(error).code(500);
+          });
         return user;
       }
       return authRegistration;

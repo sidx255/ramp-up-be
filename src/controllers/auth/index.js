@@ -9,7 +9,9 @@ const login = async (request, h) => {
 
 const register = async (request, h) => {
   const { email, password } = request.payload;
-  const response = await authServices.register(email, password);
+  const response = await authServices.register(email, password).catch((error) => {  
+    return h.response(error).code(500); 
+  });
   return response;
 };
 

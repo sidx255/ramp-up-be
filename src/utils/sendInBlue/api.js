@@ -1,7 +1,6 @@
 let Brevo = require('@getbrevo/brevo');
-const dotenv = require('dotenv');
-// config with path to .env file
-dotenv.config({ path: '../../../.env' });
+// const dotenv = require('dotenv');
+// dotenv.config({ path: '../../../.env' });
 
 let defaultClient = Brevo.ApiClient.instance;
 let apiKey = defaultClient.authentications['api-key'];

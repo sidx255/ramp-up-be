@@ -14,6 +14,7 @@
   "dependencies": {
     "@getbrevo/brevo": "^1.0.1",
     "@hapi/hapi": "^21.3.2",
+    "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "hapi": "^18.1.0",
