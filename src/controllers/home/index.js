@@ -1,7 +1,8 @@
 
 const {
   getMyEvents,
-  getAvailableRooms
+  getAvailableRooms,
+  getAllUsers
 } = require('../../services/home');
 
 const getMyEventsController = async (request, h) => {
@@ -15,7 +16,13 @@ const getAvailableRoomsController = async (request, h) => {
   return h.response(rooms).code(200);
 };
 
+const getAllUsersController = async (request, h) => {
+  const users = await getAllUsers();
+  return h.response(users).code(200);
+};
+
 module.exports = {
   getMyEventsController,
-  getAvailableRoomsController
+  getAvailableRoomsController,
+  getAllUsersController
 };

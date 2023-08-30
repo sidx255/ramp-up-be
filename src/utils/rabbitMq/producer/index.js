@@ -3,7 +3,7 @@ const {
   setupEmailRabbitMQ, 
   setupReminderRabbitMQ
 } = require('../');
-// const { calculateReminderTime } = require('../../roomBooking');
+const { calculateReminderTime } = require('../../roomBooking');
 
 const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, time, type) => {
   const channel = await setupEmailRabbitMQ();
@@ -24,8 +24,8 @@ const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, t
   });
 };
 
-const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, type) => {
-  // const reminderTime = calculateReminderTime(date, time);
+const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, from, type) => {
+  const reminderTime = calculateReminderTime(from);
   const channel = await setupReminderRabbitMQ();
   const reminderData = {
     organizer,
@@ -36,6 +36,8 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
     time,
     type,
   };
+
+  const remainingTime = reminderTime - Date.now();
   
   const delayQueueName = 'delay_queue';
   await channel.assertQueue(delayQueueName, {
@@ -43,7 +45,7 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
     arguments: {
       'x-dead-letter-exchange': '',
       'x-dead-letter-routing-key': 'reminder_queue',
-      'x-message-ttl': 60000
+      'x-message-ttl': remainingTime
     }
   });
   const exchangeName = 'delay_exchange';
@@ -59,7 +61,7 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
 
 };
 
-const cancelScheduledReminder = async (organizer, name, eventName, roomNo, date, time) => {
+const cancelScheduledReminder = async (organizer, name, eventName, roomNo, date, time, from) => {
   const queueName = 'delay_queue';
   const channel = await setupReminderRabbitMQ();
 
@@ -71,6 +73,7 @@ const cancelScheduledReminder = async (organizer, name, eventName, roomNo, date,
     'roomNo': roomNo,
     'date': date,
     'time': time,
+    'from': from,
   });
 };
 

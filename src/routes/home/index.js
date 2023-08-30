@@ -1,6 +1,7 @@
 const {
   getMyEventsController,
-  getAvailableRoomsController
+  getAvailableRoomsController,
+  getAllUsersController
 } = require('../../controllers/home');
 
 const homeRoutes = [
@@ -17,7 +18,15 @@ const homeRoutes = [
     handler: async (request, h) => {
       return getAvailableRoomsController(request, h);
     }
+  },
+  {
+    method: 'GET',
+    path: '/allUsers',
+    handler: async (request, h) => {
+      return getAllUsersController(request, h);
+    }
   }
+
 ];
 
 module.exports = homeRoutes;

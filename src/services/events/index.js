@@ -2,8 +2,8 @@ const db = require('../../../database/models');
 const { bookingCollision, cacheAvailableRooms, nameAndTime } = require('../../utils/roomBooking');
 const {
   sendEmailToQueue,
-  scheduleReminder,
-  cancelScheduledReminder
+  // scheduleReminder,
+  // cancelScheduledReminder
 } = require('../../utils/rabbitMq/producer');
 
 const getEvents = async (userEmail) => {
@@ -48,7 +48,7 @@ const createEvent = async (payload) => {
   const { name, date, time } = nameAndTime(payload);
   if (payload.roomNo)
     await sendEmailToQueue(payload.organizer, name, payload.eventName, payload.roomNo, date, time, 'c');
-  await scheduleReminder(payload.organizer, name, payload.eventName, payload.roomNo, date, time, 'r');
+  // await scheduleReminder(payload.organizer, name, payload.eventName, payload.roomNo, date, time, payload.from, 'r');
   return event;
 };
 
@@ -64,13 +64,13 @@ const updateEvent = async (id, payload) => {
   });
   await cacheAvailableRooms();
   const eventData = event[1][0].dataValues;
-  const prevData = event[1][0]._previousDataValues;
+  // const prevData = event[1][0]._previousDataValues;
   const { name, date, time } = nameAndTime(eventData);
   if(payload.roomNo || payload.date || payload.time) {
     await sendEmailToQueue(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time,'u');
-    await cancelScheduledReminder(prevData.organizer, name, prevData.eventName, prevData.roomNo, date, time);
+    // await cancelScheduledReminder(prevData.organizer, name, prevData.eventName, prevData.roomNo, date, time);
   }
-  await scheduleReminder(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time, 'r');
+  // await scheduleReminder(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time, eventData.from, 'r');
   return event;
 };
 
@@ -89,7 +89,7 @@ const deleteEvent = async (id) => {
   const { name, date, time } = nameAndTime(eventInfo);
   if(eventInfo.roomNo)
     await sendEmailToQueue(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, 'd');
-  await cancelScheduledReminder(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time);
+  // await cancelScheduledReminder(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, eventInfo.from);
   return event;
 };
 

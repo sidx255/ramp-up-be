@@ -6,6 +6,7 @@ const {
   getTeams
 } = require('../teams');
 const { cacheAvailableRooms } = require('../../utils/roomBooking');
+const { cacheAllUsers } = require('../../utils/user');
 
 const getMyEvents = async (email) => {
   const myEvents = await getEvents(email);
@@ -29,7 +30,16 @@ const getAvailableRooms = async () => {
   return rooms;
 };
 
+const getAllUsers = async () => {
+  const users = await global.redisClient.get('allUsers');
+  if(users) {
+    return JSON.parse(users);
+  }
+  return await cacheAllUsers();
+};
+
 module.exports = {
   getMyEvents,
   getAvailableRooms,
+  getAllUsers
 };

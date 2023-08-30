@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 const db = require('../../../database/models');
+const { cacheAllUsers } = require('../../utils/user');
 
 const createUser = async (payload) => {
   try {
@@ -11,6 +12,7 @@ const createUser = async (payload) => {
       contact,
       email,
     });
+    cacheAllUsers();
     return user;
   } catch (error) {
     throw error;

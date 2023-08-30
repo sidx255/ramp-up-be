@@ -4,13 +4,14 @@ const { getRoomsOccupancy } = require('../../services/rooms');
 const nameAndTime = (payload) => {
   const name = payload.organizer.split('@')[0];
   const dateObject = new Date(payload.from);
+  console.log(dateObject);
   const date = `${dateObject.getUTCDate()}/${dateObject.getUTCMonth() + 1}/${dateObject.getUTCFullYear()}`;
-  const time = `${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;  
+  const time = dateObject.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false });
   return { name, date, time };
 };
 
-const calculateReminderTime = (date, time) => {
-  const eventDateTime = new Date(`${date} ${time}`);
+const calculateReminderTime = (from) => {
+  const eventDateTime = new Date(from);
   return eventDateTime - 60 * 60 * 1000;
 };
 

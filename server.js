@@ -6,6 +6,7 @@ const {
   emailConsumer, 
   reminderConsumer
 } = require('./src/utils/rabbitMq/consumer');
+const HapiCors = require('hapi-cors');
 
 require('dotenv').config();
 
@@ -37,6 +38,16 @@ const server = hapi.server({
 });
 
 const init = async () => {
+  await server.register({
+    plugin: HapiCors,
+    options: {
+      origins: ['*'], 
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      headers: ['Authorization', 'Content-Type'], 
+      maxAge: 600, 
+    }
+  });
+
   server.route(routes);
   await server.register(authHandler);
   await server.start();
