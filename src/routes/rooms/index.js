@@ -2,6 +2,7 @@ const {
   getRoomsOccupancyController,
   getRoomOccupancyController,
   // createRoomController,
+  searchRoomsController
 } = require('../../controllers/rooms');
 
 const roomRoutes = [
@@ -19,6 +20,13 @@ const roomRoutes = [
       return getRoomOccupancyController(request, h);
     }
   },
+  {
+    method: 'GET',
+    path: '/rooms',
+    handler: (request, h) => {
+      return searchRoomsController(request, h);
+    }
+  }
 ];
 
 module.exports = roomRoutes;

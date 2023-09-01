@@ -53,7 +53,42 @@ const getRoomOccupancy = async (id) => {
   };
 };
 
+const searchRooms = async (from, to) => {
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+  console.log(from, to, fromDate, toDate);
+  const bookedRooms = await db.Event.findAll({
+    attributes: ['roomNo'],
+    where: {
+      [db.Sequelize.Op.or]: [
+        {
+          from: {
+            [db.Sequelize.Op.lt]: toDate,
+          },
+          to: {
+            [db.Sequelize.Op.gt]: fromDate,
+          },
+        },
+      ],
+    },
+    raw: true,
+  });
+
+
+  const bookedRoomNumbers = bookedRooms.map((event) => event.roomNo);
+
+  const allRoomNumbers = roomsConfig.map((room) => room.roomNo);
+
+  const availableRoomNumbers = allRoomNumbers.filter(
+    (roomNo) => !bookedRoomNumbers.includes(roomNo)
+  );
+
+  return availableRoomNumbers;
+};
+
+
 module.exports = {
   getRoomsOccupancy,
-  getRoomOccupancy
+  getRoomOccupancy,
+  searchRooms
 };

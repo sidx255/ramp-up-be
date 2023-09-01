@@ -24,14 +24,14 @@ const teamRoutes = [
   },
   {
     method: 'PATCH',
-    path: '/team/{id}/adduser',
+    path: '/team/{id}/addUser',
     handler: (request, h) => {
       return addEmpNosController(request, h);
     }
   },
   {
     method: 'PATCH',
-    path: '/team/{id}/removeuser',
+    path: '/team/{id}/removeUser',
     handler: (request, h) => {
       return removeEmpNosController(request, h);
     }

@@ -1,7 +1,8 @@
 const { 
   getRoomsOccupancy,
   getRoomOccupancy,
-  // createRoom 
+  // createRoom,
+  searchRooms
 } = require('../../services/rooms');
 
 const getRoomsOccupancyController = async (request, h) => {
@@ -15,8 +16,16 @@ const getRoomOccupancyController = async (request, h) => {
   return h.response(rooms).code(200);
 };
 
+const searchRoomsController = async (request, h) => {
+  const { from, to } = request.query;
+  console.log(request);
+  const rooms = await searchRooms(from, to);
+  return h.response(rooms).code(200);
+};
+
 module.exports = {
   getRoomsOccupancyController,
   getRoomOccupancyController,
-  // createRoomController
+  // createRoomController,
+  searchRoomsController,
 };

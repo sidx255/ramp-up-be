@@ -42,7 +42,7 @@ const init = async () => {
     plugin: HapiCors,
     options: {
       origins: ['*'], 
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       headers: ['Authorization', 'Content-Type'], 
       maxAge: 600, 
     }
