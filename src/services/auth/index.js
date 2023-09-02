@@ -4,6 +4,7 @@ const {
   AUTH_REGISTER,
   AUTH_VERIFY
 } = require('../../constants/makeRequestUri');
+const Boom = require('@hapi/boom');
 
 const login = async (email, password) => {
   const response = await makeRequest('POST', AUTH_LOGIN, { email, password });
@@ -16,8 +17,12 @@ const register = async (email, password) => {
 };
 
 const verify = async (token) => {
-  const response = await makeRequest('GET', AUTH_VERIFY, {}, { authorization: token });
-  return response;
+  try {
+    const response = await makeRequest('GET', AUTH_VERIFY, {}, { authorization: token });
+    return response;
+  } catch (error) {
+    throw Boom.unauthorized(error);
+  }
 };
 
 module.exports = {

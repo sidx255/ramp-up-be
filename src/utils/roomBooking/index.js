@@ -58,17 +58,30 @@ const roomBooking = async (updatedDataValues, previousDataValues) => {
 };
 
 const bookingCollision = async (payload) => {
+  if (payload.roomNo == null || payload.roomNo == '' || payload.roomNo == undefined) {
+    return false;
+  }
+
   const events = await db.Event.findAll({
     where: {
       roomNo: payload.roomNo,
-      [db.Sequelize.Op.or]: [
+      [db.Sequelize.Op.and]: [
         {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to, 
+          id: {
+            [db.Sequelize.Op.ne]: payload.id,
           },
-          to: {
-            [db.Sequelize.Op.gt]: payload.from,
-          },
+        },
+        {
+          [db.Sequelize.Op.or]: [
+            {
+              from: {
+                [db.Sequelize.Op.lt]: payload.to,
+              },
+              to: {
+                [db.Sequelize.Op.gt]: payload.from,
+              },
+            },
+          ],
         },
       ],
     },

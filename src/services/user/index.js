@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-catch */
 const db = require('../../../database/models');
 const { cacheAllUsers } = require('../../utils/user');
+const Boom = require('@hapi/boom');
 
 const createUser = async (payload) => {
   try {
@@ -15,7 +16,7 @@ const createUser = async (payload) => {
     cacheAllUsers();
     return user;
   } catch (error) {
-    throw error;
+    throw Boom.badRequest('Error getting all users', error);
   }
 };
 

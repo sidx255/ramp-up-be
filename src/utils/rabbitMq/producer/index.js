@@ -22,6 +22,7 @@ const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, t
   await channel.sendToQueue(queueName, Buffer.from(JSON.stringify(emailContent)), {
     persistent: true
   });
+
 };
 
 const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, from, type) => {
@@ -58,6 +59,7 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
   await channel.publish(exchangeName, '', Buffer.from(JSON.stringify(reminderData)), {
     persistent: true
   });
+
 
 };
 

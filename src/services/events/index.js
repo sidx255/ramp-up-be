@@ -5,92 +5,129 @@ const {
   // scheduleReminder,
   // cancelScheduledReminder
 } = require('../../utils/rabbitMq/producer');
+const Boom = require('@hapi/boom');
 
 const getEvents = async (userEmail) => {
-  const events = await db.Event.findAll({
-    where: {
-      empNos: {
-        [db.Sequelize.Op.contains]: [userEmail]
+  try {
+    const events = await db.Event.findAll({
+      where: {
+        empNos: {
+          [db.Sequelize.Op.contains]: [userEmail]
+        }
       }
-    }
-  });
-  return events;
+    });
+    return events;
+  } catch (error) {
+    throw Boom.badRequest('Error fetching events', error);
+  }
 };
-    
+
 const getEvent = async (id) => {
-  const event = await db.Event.findOne({
-    where: {
-      id
-    }
-  });
-  return event;
+  try {
+    const event = await db.Event.findOne({
+      where: {
+        id
+      }
+    });
+    return event;
+  } catch (error) {
+    throw Boom.badRequest('Error fetching event', error);
+  }
 };
 
 const getTeamEvents = async (teamId) => {
-  const events = await db.Event.findAll({
-    where: {
-      empNos: {
-        [db.Sequelize.Op.contains]: [teamId]
+  try {
+    const events = await db.Event.findAll({
+      where: {
+        empNos: {
+          [db.Sequelize.Op.contains]: [teamId]
+        }
       }
-    }
-  });
-
-  return events;
-};
-
-const createEvent = async (payload) => {  
-  if(await bookingCollision(payload)) {
-    throw new Error('Room already booked for this time');
+    });
+    return events;
+  } catch (error) {
+    throw Boom.badRequest('Error fetching team events', error);
   }
-  const event = await db.Event.create(payload);
-  await cacheAvailableRooms();
-
-  const { name, date, time } = nameAndTime(payload);
-  if (payload.roomNo)
-    await sendEmailToQueue(payload.organizer, name, payload.eventName, payload.roomNo, date, time, 'c');
-  // await scheduleReminder(payload.organizer, name, payload.eventName, payload.roomNo, date, time, payload.from, 'r');
-  return event;
 };
+
+const createEvent = async (payload) => {
+  const t = await db.sequelize.transaction(); 
+  try {
+    if (await bookingCollision(payload)) {
+      throw Boom.conflict('Room already booked for this time');
+    }
+    const event = await db.Event.create(payload);
+    await cacheAvailableRooms();
+
+    const { name, date, time } = nameAndTime(payload);
+    if (payload.roomNo) {
+      await sendEmailToQueue(payload.organizer, name, payload.eventName, payload.roomNo, date, time, 'c');
+    }
+    // await scheduleReminder(payload.organizer, name, payload.eventName, payload.roomNo, date, time, 'r');
+    
+    await t.commit(); 
+    return event;
+  } catch (error) {
+    await t.rollback(); 
+    throw Boom.badRequest('Error creating event', error);
+  }
+};
+
 
 const updateEvent = async (id, payload) => {
-  if(await bookingCollision(payload)) {
-    throw new Error('Room already booked for this time');
+  const t = await db.sequelize.transaction(); 
+  try {
+    if (await bookingCollision(payload)) {
+      throw Boom.conflict('Room already booked for this time');
+    }
+    const event = await db.Event.update(payload, {
+      where: {
+        id
+      },
+      individualHooks: true
+    });
+    await cacheAvailableRooms();
+    const eventData = event[1][0].dataValues;
+    // const prevData = event[1][0]._previousDataValues;
+    const { name, date, time } = nameAndTime(eventData);
+    if (payload.roomNo || payload.date || payload.time) {
+      await sendEmailToQueue(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time, 'u');
+      // await cancelScheduledReminder(prevData.organizer, name, prevData.eventName, prevData.roomNo, date, time);
+    }
+    // await scheduleReminder(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time, eventData.from, 'r');
+    await t.commit(); 
+    return event;
+  } catch (error) {
+    await t.rollback(); 
+    throw Boom.badRequest('Error updating event', error);
   }
-  const event = await db.Event.update(payload, {
-    where: {
-      id
-    },
-    individualHooks: true 
-  });
-  await cacheAvailableRooms();
-  const eventData = event[1][0].dataValues;
-  // const prevData = event[1][0]._previousDataValues;
-  const { name, date, time } = nameAndTime(eventData);
-  if(payload.roomNo || payload.date || payload.time) {
-    await sendEmailToQueue(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time,'u');
-    // await cancelScheduledReminder(prevData.organizer, name, prevData.eventName, prevData.roomNo, date, time);
-  }
-  // await scheduleReminder(eventData.organizer, name, eventData.eventName, eventData.roomNo, date, time, eventData.from, 'r');
-  return event;
 };
 
 const deleteEvent = async (id) => {
-  const eventInfo = await db.Event.findOne({
-    where: {
-      id
+  const t = await db.sequelize.transaction(); 
+  try {
+    const eventInfo = await db.Event.findOne({
+      where: {
+        id
+      }
+    });
+    const event = await db.Event.destroy({
+      where: {
+        id
+      }
+    });
+    await cacheAvailableRooms();
+    const { name, date, time } = nameAndTime(eventInfo);
+    if (eventInfo.roomNo) {
+      await sendEmailToQueue(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, 'd');
     }
-  });
-  const event = await db.Event.destroy({
-    where: {
-      id
-    }
-  });
-  await cacheAvailableRooms();
-  const { name, date, time } = nameAndTime(eventInfo);
-  if(eventInfo.roomNo)
-    await sendEmailToQueue(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, 'd');
-  // await cancelScheduledReminder(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, eventInfo.from);
-  return event;
+    // await cancelScheduledReminder(eventInfo.organizer, name, eventInfo.eventName, eventInfo.roomNo, date, time, eventInfo.from);
+    await t.commit();
+    return event;
+  } catch (error) {
+    await t.rollback();
+    throw Boom.badRequest('Error deleting event', error);
+  }
 };
 
 module.exports = {

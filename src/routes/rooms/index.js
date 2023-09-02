@@ -2,7 +2,7 @@ const {
   getRoomsOccupancyController,
   getRoomOccupancyController,
   // createRoomController,
-  searchRoomsController
+  searchRoomsController,
 } = require('../../controllers/rooms');
 
 const roomRoutes = [

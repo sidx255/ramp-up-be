@@ -5,7 +5,6 @@ const makeRequest = async (method, url, data, headers = {}) => {
     method,
     url,
     data,
-    // optional headers
     headers
   });
   return response.data;
