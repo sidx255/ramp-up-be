@@ -4,7 +4,6 @@ const { getRoomsOccupancy } = require('../../services/rooms');
 const nameAndTime = (payload) => {
   const name = payload.organizer.split('@')[0];
   const dateObject = new Date(payload.from);
-  console.log(dateObject);
   const date = `${dateObject.getUTCDate()}/${dateObject.getUTCMonth() + 1}/${dateObject.getUTCFullYear()}`;
   const time = dateObject.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false });
   return { name, date, time };
@@ -61,34 +60,76 @@ const bookingCollision = async (payload) => {
   if (payload.roomNo == null || payload.roomNo == '' || payload.roomNo == undefined) {
     return false;
   }
-
+  
   const events = await db.Event.findAll({
     where: {
       roomNo: payload.roomNo,
-      [db.Sequelize.Op.and]: [
+      // 10 - 11
+      [db.Sequelize.Op.or]: [
+        // case 1: 10:15 - 10:30
         {
-          id: {
-            [db.Sequelize.Op.ne]: payload.id,
+          from: {
+            [db.Sequelize.Op.lt]: payload.to,
+            [db.Sequelize.Op.lt]: payload.from
           },
+          to: {
+            [db.Sequelize.Op.gt]: payload.from,
+            [db.Sequelize.Op.gt]: payload.to
+          }
+        },
+        // case 2: 9 to 12
+        {
+          from: {
+            [db.Sequelize.Op.lt]: payload.to,  
+            [db.Sequelize.Op.gt]: payload.from
+          },
+          to: {
+            [db.Sequelize.Op.lt]: payload.from,
+            [db.Sequelize.Op.lt]: payload.to 
+          }
+        },
+        // case 3: 9 to 10:30
+        {
+          from: {
+            [db.Sequelize.Op.lt]: payload.to,
+            [db.Sequelize.Op.gt]: payload.from
+          },
+          to: {
+            [db.Sequelize.Op.gt]: payload.from,
+            [db.Sequelize.Op.gt]: payload.to 
+          }
+        },
+        // case 4: 10:30 to 12
+        {
+          from: {
+            [db.Sequelize.Op.lt]: payload.to,
+            [db.Sequelize.Op.lt]: payload.from
+          },
+          to: {
+            [db.Sequelize.Op.gt]: payload.from,
+            [db.Sequelize.Op.lt]: payload.to
+          }
+        },
+        // addn cases
+        {
+          from: {
+            [db.Sequelize.Op.lt]: payload.to,
+            [db.Sequelize.Op.gt]: payload.from
+          }
         },
         {
-          [db.Sequelize.Op.or]: [
-            {
-              from: {
-                [db.Sequelize.Op.lt]: payload.to,
-              },
-              to: {
-                [db.Sequelize.Op.gt]: payload.from,
-              },
-            },
-          ],
-        },
-      ],
-    },
+          to: {
+            [db.Sequelize.Op.lt]: payload.to,
+            [db.Sequelize.Op.gt]: payload.from
+          }
+        }
+      ]
+    }
   });
-
+  
   return events.length > 0;
 };
+  
 
 const getAvailableRoomsDb = async () => {
   const rooms = await getRoomsOccupancy();

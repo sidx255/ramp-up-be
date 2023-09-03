@@ -28,7 +28,6 @@ const reminderConsumer = async () => {
   const channel = await setupReminderRabbitMQ();
 
   channel.consume(queueName, async (message) => {
-    console.log('reminder', message);
     const reminderData = JSON.parse(message.content.toString());
     await emailHandler(
       reminderData.organizer,

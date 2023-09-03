@@ -66,7 +66,6 @@ const searchRooms = async (from, to) => {
   try {
     const fromDate = new Date(from);
     const toDate = new Date(to);
-    console.log(from, to, fromDate, toDate);
     const roomsOccupancy = await getRoomsOccupancy();
     const bookedRooms = await db.Event.findAll({
       attributes: ['roomNo'],

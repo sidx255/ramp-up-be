@@ -18,7 +18,6 @@ const getRoomOccupancyController = async (request, h) => {
 
 const searchRoomsController = async (request, h) => {
   const { from, to } = request.query;
-  console.log(request);
   const rooms = await searchRooms(from, to);
   return h.response(rooms).code(200);
 };
