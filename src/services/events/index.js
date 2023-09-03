@@ -77,7 +77,7 @@ const createEvent = async (payload) => {
 const updateEvent = async (id, payload) => {
   const t = await db.sequelize.transaction(); 
   try {
-    if (await bookingCollision(payload)) {
+    if (await bookingCollision(payload, id)) {
       throw Boom.conflict('Room already booked for this time');
     }
     const event = await db.Event.update(payload, {

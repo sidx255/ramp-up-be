@@ -15,7 +15,6 @@ const calculateReminderTime = (from) => {
 };
 
 const roomBooking = async (updatedDataValues, previousDataValues) => {
-      
   if(updatedDataValues.room !== previousDataValues.room) {
     const room = await db.Room.findOne({
       where: {
@@ -56,77 +55,86 @@ const roomBooking = async (updatedDataValues, previousDataValues) => {
   }
 };
 
-const bookingCollision = async (payload) => {
+const bookingCollision = async (payload, eventIdToExclude) => {
   if (payload.roomNo == null || payload.roomNo == '' || payload.roomNo == undefined) {
     return false;
   }
-  
-  const events = await db.Event.findAll({
-    where: {
-      roomNo: payload.roomNo,
-      // 10 - 11
-      [db.Sequelize.Op.or]: [
-        // case 1: 10:15 - 10:30
-        {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to,
-            [db.Sequelize.Op.lt]: payload.from
-          },
-          to: {
-            [db.Sequelize.Op.gt]: payload.from,
-            [db.Sequelize.Op.gt]: payload.to
-          }
+
+  const whereClause = 
+  {
+    roomNo: payload.roomNo,
+    // 10 - 11
+    [db.Sequelize.Op.or]: [
+      // case 1: 10:15 - 10:30
+      {
+        from: {
+          [db.Sequelize.Op.lt]: payload.to,
+          [db.Sequelize.Op.lt]: payload.from
         },
-        // case 2: 9 to 12
-        {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to,  
-            [db.Sequelize.Op.gt]: payload.from
-          },
-          to: {
-            [db.Sequelize.Op.lt]: payload.from,
-            [db.Sequelize.Op.lt]: payload.to 
-          }
-        },
-        // case 3: 9 to 10:30
-        {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to,
-            [db.Sequelize.Op.gt]: payload.from
-          },
-          to: {
-            [db.Sequelize.Op.gt]: payload.from,
-            [db.Sequelize.Op.gt]: payload.to 
-          }
-        },
-        // case 4: 10:30 to 12
-        {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to,
-            [db.Sequelize.Op.lt]: payload.from
-          },
-          to: {
-            [db.Sequelize.Op.gt]: payload.from,
-            [db.Sequelize.Op.lt]: payload.to
-          }
-        },
-        // addn cases
-        {
-          from: {
-            [db.Sequelize.Op.lt]: payload.to,
-            [db.Sequelize.Op.gt]: payload.from
-          }
-        },
-        {
-          to: {
-            [db.Sequelize.Op.lt]: payload.to,
-            [db.Sequelize.Op.gt]: payload.from
-          }
+        to: {
+          [db.Sequelize.Op.gt]: payload.from,
+          [db.Sequelize.Op.gt]: payload.to
         }
-      ]
-    }
+      },
+      // case 2: 9 to 12
+      {
+        from: {
+          [db.Sequelize.Op.lt]: payload.to,  
+          [db.Sequelize.Op.gt]: payload.from
+        },
+        to: {
+          [db.Sequelize.Op.lt]: payload.from,
+          [db.Sequelize.Op.lt]: payload.to 
+        }
+      },
+      // case 3: 9 to 10:30
+      {
+        from: {
+          [db.Sequelize.Op.lt]: payload.to,
+          [db.Sequelize.Op.gt]: payload.from
+        },
+        to: {
+          [db.Sequelize.Op.gt]: payload.from,
+          [db.Sequelize.Op.gt]: payload.to 
+        }
+      },
+      // case 4: 10:30 to 12
+      {
+        from: {
+          [db.Sequelize.Op.lt]: payload.to,
+          [db.Sequelize.Op.lt]: payload.from
+        },
+        to: {
+          [db.Sequelize.Op.gt]: payload.from,
+          [db.Sequelize.Op.lt]: payload.to
+        }
+      },
+      // addn cases
+      {
+        from: {
+          [db.Sequelize.Op.lt]: payload.to,
+          [db.Sequelize.Op.gt]: payload.from
+        }
+      },
+      {
+        to: {
+          [db.Sequelize.Op.lt]: payload.to,
+          [db.Sequelize.Op.gt]: payload.from
+        }
+      }
+    ]
+  };
+
+  if (eventIdToExclude) {
+    whereClause.id = {
+      [db.Sequelize.Op.ne]: eventIdToExclude
+    };
+  }
+
+  const events = await db.Event.findAll({
+    where: whereClause
   });
-  
+
   return events.length > 0;
 };
   
