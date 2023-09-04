@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"empNo\": \"357235580\",\n    \"email\": \"g.poosarla@mail.com\",\n    \"password\": \"gaurav\",\n    \"name\": \"Gaurav Poosarla\",\n    \"role\": \"Dev\",\n    \"contact\": \"9876543210\"\n}",
+							"raw": "{\n    \"empNo\": \"357235580\",\n    \"email\": \"siddharth255@outlook.com\",\n    \"password\": \"siddharth\",\n    \"name\": \"Siddharth Sharma\",\n    \"role\": \"Dev\",\n    \"contact\": \"9876543210\"\n}\n// {\n//     \"empNo\": \"678543241\",\n//     \"email\": \"dinesh.b.2k1@gmail.com\",\n//     \"password\": \"dinesh\",\n//     \"name\": \"Dinesh B\",\n//     \"role\": \"Dev\",\n//     \"contact\": \"9876543210\"\n// }\n// {\n//     \"empNo\": \"867584382\",\n//     \"email\": \"mrahul.2002@gmail.com\",\n//     \"password\": \"rahul\",\n//     \"name\": \"Rahul\",\n//     \"role\": \"Dev\",\n//     \"contact\": \"9876543210\"\n// }\n// {\n//     \"empNo\": \"257245680\",\n//     \"email\": \"askysuvi@gmail.com\",\n//     \"password\": \"suveksha\",\n//     \"name\": \"Suveksha\",\n//     \"role\": \"Dev\",\n//     \"contact\": \"9876543210\"\n// }\n// {\n//     \"empNo\": \"756983041\",\n//     \"email\": \"s.garule@samsung.com\",\n//     \"password\": \"sidhant\",\n//     \"name\": \"Sidhant Garule\",\n//     \"role\": \"Head\",\n//     \"contact\": \"9876543210\"\n// }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -44,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "//   {\n//      \"email\": \"ujwaleshwar@outlook.com\",\n//      \"password\": \"ujwal\"\n//   }\n// {\n//         \"email\": \"g.poosarla@mail.com\",\n//     \"password\": \"gaurav\"\n// }\n  {\n     \"email\": \"sid1.sharma@mail.com\",\n     \"password\": \"siddharth\"\n  }\n//  {\"email\": \"s.garule@mail.com\",\n//          \"password\": \"siddhant\"\n//  }",
+							"raw": "//   {\n//      \"email\": \"ujwaleshwar@outlook.com\",\n//      \"password\": \"ujwal\"\n//   }\n// {\n//         \"email\": \"g.poosarla@mail.com\",\n//     \"password\": \"gaurav\"\n// }\n  {\n    \"email\": \"siddharth255@outlook.com\",\n    \"password\": \"siddharth\"\n  }\n//  {\"email\": \"s.garule@mail.com\",\n//          \"password\": \"siddhant\"\n//  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -121,6 +121,31 @@
 					"response": []
 				},
 				{
+					"name": "GET: All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5500/allUsers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"allUsers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GET: All Available Rooms",
 					"request": {
 						"method": "GET",
@@ -188,7 +213,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"empNos\": [\n        \"rahul.k@mail.com\",\n        \"dinesh@gmail.com\"\n    ],\n    \"description\": \"Shop App\"\n}",
+							"raw": "{\n    \"empNos\": [\n    \"siddharth255@outlook.com\",\n        \"dinesh.b.2k1@gmail.com\"\n    ],\n    \"description\": \"New Joiners\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -223,7 +248,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"empNos\": [\"s.garule@mail.com\"]\n}",
+							"raw": "{\n    \"empNos\": [\"poosarlagaurav@gmail.com\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -231,7 +256,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5500/team/c2173493-a7cd-4404-a4f4-3bc953249214/adduser",
+							"raw": "http://localhost:5500/team/3a20afd7-1549-4d0f-be5b-7cb94f7ff829/addUser",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -239,8 +264,8 @@
 							"port": "5500",
 							"path": [
 								"team",
-								"c2173493-a7cd-4404-a4f4-3bc953249214",
-								"adduser"
+								"3a20afd7-1549-4d0f-be5b-7cb94f7ff829",
+								"addUser"
 							]
 						}
 					},
@@ -267,7 +292,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5500/team/45964175-fa9d-42c5-8266-1135f0c17f53/removeuser",
+							"raw": "http://localhost:5500/team/45964175-fa9d-42c5-8266-1135f0c17f53/removeUser",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -276,7 +301,7 @@
 							"path": [
 								"team",
 								"45964175-fa9d-42c5-8266-1135f0c17f53",
-								"removeuser"
+								"removeUser"
 							]
 						}
 					},
@@ -334,6 +359,41 @@
 							"path": [
 								"rooms",
 								"availability"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET: Search Rooms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5500/rooms?from=2023-09-01T16:00:00.000Z&to=2023-09-01T17:00:00.000Z",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"rooms"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2023-09-01T16:00:00.000Z"
+								},
+								{
+									"key": "to",
+									"value": "2023-09-01T17:00:00.000Z"
+								}
 							]
 						}
 					},
@@ -454,6 +514,52 @@
 					"response": []
 				},
 				{
+					"name": "GET: Team Events",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5500/events/team/3a20afd7-1549-4d0f-be5b-7cb94f7ff829",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5500",
+							"path": [
+								"events",
+								"team",
+								"3a20afd7-1549-4d0f-be5b-7cb94f7ff829"
+							],
+							"query": [
+								{
+									"key": "authorization",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE: Event",
 					"request": {
 						"method": "DELETE",
@@ -474,7 +580,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5500/event/0772c397-dcb4-4e6c-97e0-027087d0b3e1",
+							"raw": "http://localhost:5500/event/f17c4c0b-42ec-4c9f-82c1-a3864f12844e",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -482,7 +588,7 @@
 							"port": "5500",
 							"path": [
 								"event",
-								"0772c397-dcb4-4e6c-97e0-027087d0b3e1"
+								"f17c4c0b-42ec-4c9f-82c1-a3864f12844e"
 							],
 							"query": [
 								{
@@ -508,7 +614,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"empNos\": [\n        \"c2173493-a7cd-4404-a4f4-3bc953249214\"\n    ],\n    \"organizer\": \"sid1.sharma@gmail.com\",\n    \"eventName\": \"DPS Meet\",\n    \"from\": \"2023-08-25T08:00:00.000Z\",\n    \"to\": \"2023-08-25T13:00:00.000Z\",\n    \"description\": \"VIT Meet in Room 1\",\n    \"roomNo\": \"4\"\n}",
+							"raw": "{\n    \"empNos\": [\n        \"3a20afd7-1549-4d0f-be5b-7cb94f7ff829\"\n    ],\n    \"organizer\": \"siddharth255@outlook.com\",\n    \"eventName\": \"Alumni Meet\",\n    \"from\": \"2023-09-01T16:00:00.000Z\",\n    \"to\": \"2023-09-01T20:00:00.000Z\",\n    \"description\": \"VIT Alumni Meet\",\n    \"roomNo\": \"2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -542,7 +648,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "// {\n//     \"empNos\": [\"sid1.sharma@mail.com\", \"s.garule@mail.com\"],\n//     \"eventName\": \"Meet 5\"\n// }\n{\n    \"roomNo\": \"5\"\n}",
+							"raw": "// {\n//     \"empNos\": [\"sid1.sharma@mail.com\", \"s.garule@mail.com\"],\n//     \"eventName\": \"Meet 5\"\n// }\n{\n    \"roomNo\": \"1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -550,7 +656,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5500/event/3f70a40d-391e-4a36-85c1-57bb7884e209",
+							"raw": "http://localhost:5500/event/1b8b1f0b-eda3-41cb-a2f1-ade82b8503e0",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -558,7 +664,7 @@
 							"port": "5500",
 							"path": [
 								"event",
-								"3f70a40d-391e-4a36-85c1-57bb7884e209"
+								"1b8b1f0b-eda3-41cb-a2f1-ade82b8503e0"
 							]
 						}
 					},
