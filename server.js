@@ -6,6 +6,8 @@ const {
   emailConsumer, 
   reminderConsumer
 } = require('./src/utils/rabbitMq/consumer');
+const checkEventsWithinNextHour = require ('./src/utils/reminder');
+const cron = require('node-cron');
 const HapiCors = require('hapi-cors');
 
 require('dotenv').config();
@@ -23,6 +25,10 @@ global.redisClient
   .catch((err) => {
     console.log('BE Redis error: ', err);
   });
+
+cron.schedule('0 * * * *', () => {
+  checkEventsWithinNextHour();
+});
 
 emailConsumer().catch((err) => {
   console.log('BE RabbitMQ Email error: ', err);

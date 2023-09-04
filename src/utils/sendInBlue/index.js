@@ -179,14 +179,18 @@ const sendRedminderEmail = async (email, name, eventName, roomNo, date, time) =>
 };
 
 const emailHandler = async (email, name, eventName, roomNo, date, time, type) => {
-  if (type === 'c') {
-    await sendRegistrationEmail(email, name, eventName, roomNo, date, time);
-  } else if (type === 'u') {
-    await sendUpdateEmail(email, name, eventName, roomNo, date, time);
-  } else if (type === 'd') {
-    await sendCancellationEmail(email, name, eventName, roomNo, date, time);
-  } else if (type === 'r') {
-    await sendRedminderEmail(email, name, eventName, roomNo, date, time);
+  try {
+    if (type === 'c') {
+      await sendRegistrationEmail(email, name, eventName, roomNo, date, time);
+    } else if (type === 'u') {
+      await sendUpdateEmail(email, name, eventName, roomNo, date, time);
+    } else if (type === 'd') {
+      await sendCancellationEmail(email, name, eventName, roomNo, date, time);
+    } else if (type === 'r') {
+      await sendRedminderEmail(email, name, eventName, roomNo, date, time);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 

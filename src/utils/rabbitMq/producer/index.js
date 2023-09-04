@@ -3,7 +3,7 @@ const {
   setupEmailRabbitMQ, 
   setupReminderRabbitMQ
 } = require('../');
-const { calculateReminderTime } = require('../../roomBooking');
+// const { calculateReminderTime } = require('../../roomBooking');
 
 const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, time, type) => {
   const channel = await setupEmailRabbitMQ();
@@ -25,8 +25,7 @@ const sendEmailToQueue = async (organizerEmail, name, eventName, roomNo, date, t
 
 };
 
-const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, from, type) => {
-  const reminderTime = calculateReminderTime(from);
+const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, type) => {
   const channel = await setupReminderRabbitMQ();
   const reminderData = {
     organizer,
@@ -37,8 +36,6 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
     time,
     type,
   };
-
-  const remainingTime = reminderTime - Date.now();
   
   const delayQueueName = 'delay_queue';
   await channel.assertQueue(delayQueueName, {
@@ -46,10 +43,12 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
     arguments: {
       'x-dead-letter-exchange': '',
       'x-dead-letter-routing-key': 'reminder_queue',
-      'x-message-ttl': remainingTime
+      'x-message-ttl': 1000
     }
   });
+
   const exchangeName = 'delay_exchange';
+
   await channel.assertExchange(exchangeName, 'direct', {
     durable: true
   });
@@ -59,8 +58,6 @@ const scheduleReminder = async (organizer, name, eventName, roomNo, date, time, 
   await channel.publish(exchangeName, '', Buffer.from(JSON.stringify(reminderData)), {
     persistent: true
   });
-
-
 };
 
 const cancelScheduledReminder = async (organizer, name, eventName, roomNo, date, time, from) => {
